@@ -1,6 +1,6 @@
 # GraphQL Server with Authentication & Permissions
 
-This example shows how to implement a **GraphQL server with JavaScript** with the following stack:
+This example shows how to implement a **GraphQL server with TypeScript** with the following stack:
 
 - [**Apollo Server**](https://github.com/apollographql/apollo-server): HTTP server for GraphQL APIs   
 - [**GraphQL Nexus**](https://nexusjs.org/docs/): GraphQL schema definition and resolver implementation 
@@ -24,10 +24,11 @@ This example shows how to implement a **GraphQL server with JavaScript** with th
 Download this example:
 
 ```
-curl https://codeload.github.com/prisma/prisma-examples/tar.gz/latest | tar -xz --strip=2 prisma-examples-latest/javascript/graphql-auth
+curl https://codeload.github.com/prisma/prisma-examples/tar.gz/latest | tar -xz --strip=2 prisma-examples-latest/typescript/graphql-auth
 ```
 
 Install npm dependencies:
+
 ```
 cd graphql-auth
 npm install
@@ -44,7 +45,7 @@ git clone git@github.com:prisma/prisma-examples.git --depth=1
 Install npm dependencies:
 
 ```
-cd prisma-examples/javascript/graphql-auth
+cd prisma-examples/typescript/graphql-auth
 npm install
 ```
 
@@ -58,7 +59,7 @@ Run the following command to create your SQLite database file. This also creates
 npx prisma migrate dev --name init
 ```
 
-Now, seed the database with the sample data in [`prisma/seed.js`](./prisma/seed.js) by running the following command:
+Now, seed the database with the sample data in [`prisma/seed.ts`](./prisma/seed.ts) by running the following command:
 
 ```
 npx prisma db seed --preview-feature
@@ -405,7 +406,7 @@ You can now use your `PrismaClient` instance to perform operations against the n
 First, add a new GraphQL type via Nexus' `objectType` function:
 
 ```diff
-// ./src/schema.js
+// ./src/schema.ts
 
 +const Profile = objectType({
 +  name: 'Profile',
@@ -477,7 +478,7 @@ Note that in order to resolve any type errors, your development server needs to 
 #### 2.2. Add a `createProfile` GraphQL mutation
 
 ```diff
-// ./src/schema.js
+// ./src/schema.ts
 
 const Mutation = objectType({
   name: 'Mutation',

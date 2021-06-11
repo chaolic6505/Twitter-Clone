@@ -1,9 +1,9 @@
-const { permissions } = require('./permissions')
-const { APP_SECRET, getUserId } = require('./utils')
-const { compare, hash } = require('bcryptjs')
-const { sign } = require('jsonwebtoken')
-const { applyMiddleware } = require('graphql-middleware')
-const {
+import { permissions } from './permissions'
+import { APP_SECRET, getUserId } from './utils'
+import { compare, hash } from 'bcryptjs'
+import { sign } from 'jsonwebtoken'
+import { applyMiddleware } from 'graphql-middleware'
+import {
   intArg,
   makeSchema,
   nonNull,
@@ -13,24 +13,25 @@ const {
   arg,
   asNexusMethod,
   enumType,
-} = require('nexus')
-const { DateTimeResolver } = require('graphql-scalars')
+} from 'nexus'
+import { DateTimeResolver } from 'graphql-scalars'
+import { Context } from './context'
 
-const DateTime = asNexusMethod(DateTimeResolver, 'date')
+export const DateTime = asNexusMethod(DateTimeResolver, 'date')
 
 const Query = objectType({
   name: 'Query',
   definition(t) {
     t.nonNull.list.nonNull.field('allUsers', {
       type: 'User',
-      resolve: (_parent, _args, context) => {
+      resolve: (_parent, _args, context: Context) => {
         return context.prisma.user.findMany()
       },
     })
 
     t.nullable.field('me', {
       type: 'User',
-      resolve: (parent, args, context) => {
+      resolve: (parent, args, context: Context) => {
         const userId = getUserId(context)
         return context.prisma.user.findUnique({
           where: {
@@ -45,7 +46,7 @@ const Query = objectType({
       args: {
         id: intArg(),
       },
-      resolve: (_parent, args, context) => {
+      resolve: (_parent, args, context: Context) => {
         return context.prisma.post.findUnique({
           where: { id: args.id || undefined },
         })
@@ -62,7 +63,7 @@ const Query = objectType({
           type: 'PostOrderByUpdatedAtInput',
         }),
       },
-      resolve: (_parent, args, context) => {
+      resolve: (_parent, args, context: Context) => {
         const or = args.searchString
           ? {
             OR: [
@@ -93,7 +94,7 @@ const Query = objectType({
           }),
         ),
       },
-      resolve: (_parent, args, context) => {
+      resolve: (_parent, args, context: Context) => {
         return context.prisma.user
           .findUnique({
             where: {
@@ -121,7 +122,7 @@ const Mutation = objectType({
         email: nonNull(stringArg()),
         password: nonNull(stringArg()),
       },
-      resolve: async (_parent, args, context) => {
+      resolve: async (_parent, args, context: Context) => {
         const hashedPassword = await hash(args.password, 10)
         const user = await context.prisma.user.create({
           data: {
@@ -143,7 +144,7 @@ const Mutation = objectType({
         email: nonNull(stringArg()),
         password: nonNull(stringArg()),
       },
-      resolve: async (_parent, { email, password }, context) => {
+      resolve: async (_parent, { email, password }, context: Context) => {
         const user = await context.prisma.user.findUnique({
           where: {
             email,
@@ -172,7 +173,7 @@ const Mutation = objectType({
           }),
         ),
       },
-      resolve: (_, args, context) => {
+      resolve: (_, args, context: Context) => {
         const userId = getUserId(context)
         return context.prisma.post.create({
           data: {
@@ -189,7 +190,7 @@ const Mutation = objectType({
       args: {
         id: nonNull(intArg()),
       },
-      resolve: async (_, args, context) => {
+      resolve: async (_, args, context: Context) => {
         try {
           const post = await context.prisma.post.findUnique({
             where: { id: args.id || undefined },
@@ -199,7 +200,7 @@ const Mutation = objectType({
           })
           return context.prisma.post.update({
             where: { id: args.id || undefined },
-            data: { published: !post.published },
+            data: { published: !post?.published },
           })
         } catch (e) {
           throw new Error(
@@ -214,7 +215,7 @@ const Mutation = objectType({
       args: {
         id: nonNull(intArg()),
       },
-      resolve: (_, args, context) => {
+      resolve: (_, args, context: Context) => {
         return context.prisma.post.update({
           where: { id: args.id || undefined },
           data: {
@@ -231,7 +232,7 @@ const Mutation = objectType({
       args: {
         id: nonNull(intArg()),
       },
-      resolve: (_, args, context) => {
+      resolve: (_, args, context: Context) => {
         return context.prisma.post.delete({
           where: { id: args.id },
         })
@@ -248,7 +249,7 @@ const User = objectType({
     t.nonNull.string('email')
     t.nonNull.list.nonNull.field('posts', {
       type: 'Post',
-      resolve: (parent, _, context) => {
+      resolve: (parent, _, context: Context) => {
         return context.prisma.user
           .findUnique({
             where: { id: parent.id || undefined },
@@ -271,7 +272,7 @@ const Post = objectType({
     t.nonNull.int('viewCount')
     t.field('author', {
       type: 'User',
-      resolve: (parent, _, context) => {
+      resolve: (parent, _, context: Context) => {
         return context.prisma.post
           .findUnique({
             where: { id: parent.id || undefined },
@@ -359,8 +360,4 @@ const schemaWithoutPermissions = makeSchema({
   },
 })
 
-const schema = applyMiddleware(schemaWithoutPermissions, permissions)
-
-module.exports = {
-  schema: schema,
-}
+export const schema = applyMiddleware(schemaWithoutPermissions, permissions)

@@ -1,8 +1,9 @@
-const { rule, shield } = require('graphql-shield')
-const { getUserId } = require('../utils')
+import { rule, shield } from 'graphql-shield'
+import { getUserId } from '../utils'
+import { Context } from '../context'
 
 const rules = {
-  isAuthenticatedUser: rule()((_parent, _args, context) => {
+  isAuthenticatedUser: rule()((_parent, _args, context: Context) => {
     const userId = getUserId(context)
     return Boolean(userId)
   }),
@@ -19,7 +20,7 @@ const rules = {
   }),
 }
 
-const permissions = shield({
+export const permissions = shield({
   Query: {
     me: rules.isAuthenticatedUser,
     draftsByUser: rules.isAuthenticatedUser,
@@ -32,7 +33,3 @@ const permissions = shield({
     togglePublishPost: rules.isPostOwner,
   },
 })
-
-module.exports = {
-  permissions: permissions,
-}
