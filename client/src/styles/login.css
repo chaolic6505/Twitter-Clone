@@ -43,7 +43,7 @@ h3 {
 	padding-top: 10px;
 	padding-bottom: 10px;
 	cursor: pointer;
-	outline: none;
+	color:blue;
 }
 
 button,
@@ -53,7 +53,6 @@ button span {
 button {
 	background-color: var(--main-color);
 	border: 0;
-	color: #fff;
 	font-weight: bold;
 }
 button span {
@@ -86,3 +85,4 @@ a {
 .register {
 	text-align: center;
 }
+

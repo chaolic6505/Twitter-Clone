@@ -21,7 +21,8 @@ export const DateTime = asNexusMethod(DateTimeResolver, 'date')
 
 const Query = objectType({
   name: 'Query',
-  definition(t) {
+  definition(t) 
+  {
     t.nonNull.list.nonNull.field('allUsers', {
       type: 'User',
       resolve: (_parent, _args, context: Context) => {

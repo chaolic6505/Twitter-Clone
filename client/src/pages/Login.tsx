@@ -6,30 +6,26 @@ import * as Yup from 'yup';
 import TwitterLogo from '../styles/assets/twitter-logo.png';
 import '../styles/login.css';
 
-const SIGNUP_MUTATION = gql`
-	mutation signup($name: String, $email: String!, $password: String!) {
-		signup(name: $name, email: $email, password: $password) {
+const LOGIN_MUTATION = gql`
+	mutation login($email: String!, $password: String!) {
+		login(email: $email, password: $password) {
 			token
 		}
 	}
 `;
 
-interface SignupValues {
+interface LoginValues {
 	email: string;
 	password: string;
-	confirmPassword: string;
-	name: string;
 }
 
-function Signup() {
+function Login() {
 	const history = useHistory();
-	const [signup, { data }] = useMutation(SIGNUP_MUTATION);
+	const [login, { data }] = useMutation(LOGIN_MUTATION);
 
-	const initialValues: SignupValues = {
+	const initialValues: LoginValues = {
 		email: '',
 		password: '',
-		confirmPassword: '',
-		name: '',
 	};
 
 	const validationSchema = Yup.object({
@@ -37,28 +33,21 @@ function Signup() {
 		password: Yup.string()
 			.max(20, 'Must be 20 characters or less')
 			.required('Password Required'),
-		confirmPassword: Yup.string().oneOf(
-			[Yup.ref('password')],
-			'Passwords must match',
-		),
-		name: Yup.string()
-			.max(15, 'Must be 15 characters or less')
-			.required('Name Required'),
 	});
 
 	return (
 		<div className="container">
 			<img src={TwitterLogo} alt="logo" style={{ width: '50px' }} className="logo" />
-			<h3>Sign up</h3>
+			<h3>Log in to Fake Twitter</h3>
 			<Formik
 				initialValues={initialValues}
 				validationSchema={validationSchema}
 				onSubmit={async (values, { setSubmitting }) => {
 					setSubmitting(true);
-					const response = await signup({
+					const response = await login({
 						variables: values,
 					});
-					localStorage.setItem('token', response.data.signup.token);
+					localStorage.setItem('token', response.data.login.token);
 					setSubmitting(false);
 					history.push('/');
 				}}
@@ -66,23 +55,19 @@ function Signup() {
 				<Form>
 					<Field name="email" type="text" placeholder="Email" />
 					<ErrorMessage name="email" component={'div'} />
-					<Field name="name" type="text" placeholder="Name" />
-					<ErrorMessage name="name" component={'div'} />
 					<Field name="password" type="password" placeholder="Password" />
 					<ErrorMessage name="password" component={'div'} />
-					<Field name="confirmPassword" type="password" placeholder="Confirm Password" />
-					<ErrorMessage name="confirmPassword" component={'span'} />
 					<button type="submit" className="login-button">
-						<span>Sign up</span>
+						<span>Login</span>
 					</button>
 				</Form>
 			</Formik>
 			<div className="register">
-				<h4>Already have an account?</h4>
-				<Link to="/login">Log in</Link>
+				<h4>Don't have an account?</h4>
+				<Link to="/signup">Sign up</Link>
 			</div>
 		</div>
 	);
 }
 
-export default Signup;
+export default Login;
