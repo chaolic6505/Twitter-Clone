@@ -17,6 +17,14 @@ model User {
 
 }
 
+model Tweet {
+  id        Int          @id @default(autoincrement())
+  createdAt DateTime     @default(now())
+  content   String?
+  author    User?        @relation(fields: [authorId], references: [id])
+  authorId  Int?
+}
+
 model Profile {
   id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
@@ -28,14 +36,18 @@ model Profile {
   User      User?    @relation(fields: [userId], references: [id])
 }
 
-model Tweet {
-  id        Int          @id @default(autoincrement())
-  createdAt DateTime     @default(now())
+
+
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title     String
   content   String?
-  author    User?        @relation(fields: [authorId], references: [id])
+  published Boolean  @default(false)
+  viewCount Int      @default(0)
   authorId  Int?
 }
-
-
 
 
