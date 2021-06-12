@@ -7,67 +7,89 @@ type AuthPayload {
   user: User
 }
 
-"""
-A date-time string at UTC, such as 2007-12-03T10:15:30Z, compliant with the `date-time` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
-"""
+type Comment {
+  Comment: Comment
+  commentId: Int
+  content: String
+  createdAt: DateTime!
+  id: Int!
+  User: User
+}
+
+input CommentWhereUniqueInput {
+  id: Int
+}
+
 scalar DateTime
 
+type Following {
+  avatar: String!
+  followId: Int!
+  id: Int!
+  name: String!
+  User: User
+}
+
+input FollowingWhereUniqueInput {
+  id: Int
+}
+
+type LikedTweet {
+  id: Int!
+  likedAt: DateTime!
+  tweet: Tweet!
+}
+
+input LikedTweetWhereUniqueInput {
+  id: Int
+}
+
 type Mutation {
+  createComment(content: String!, id: Int!): Comment
   createProfile(avatar: String, bio: String, location: String, website: String): Profile
+  createReply(commentId: Int, content: String!, id: Int!): Comment
+  createTweet(content: String): Tweet
+  deleteFollow(id: Int!): Following
+  deleteLike(id: Int!): LikedTweet
+  follow(avatar: String!, followId: Int!, name: String!): Following
+  likeTweet(id: Int): LikedTweet
   login(email: String!, password: String!): AuthPayload
   signup(email: String!, name: String, password: String!): AuthPayload
   updateProfile(avatar: String, bio: String, id: Int, location: String, website: String): Profile
 }
 
-input PostCreateInput {
-  content: String
-  title: String!
-}
-
-input PostOrderByUpdatedAtInput {
-  updatedAt: SortOrder!
-}
-
 type Profile {
+  avatar: String
   bio: String
   id: Int!
   location: String
-  string: String
   website: String
 }
 
 type Query {
-  allUsers: [User!]!
   me: User
-}
-
-enum SortOrder {
-  asc
-  desc
+  tweet(id: Int): Tweet
+  tweets: [Tweet]
+  user(id: Int): User
+  users: [User]
 }
 
 type Tweet {
-  author: String
-  authorId: Int
+  author: User
+  comments(after: CommentWhereUniqueInput, before: CommentWhereUniqueInput, first: Int, last: Int): [Comment!]!
   content: String
   createdAt: DateTime!
   id: Int!
+  likes(after: LikedTweetWhereUniqueInput, before: LikedTweetWhereUniqueInput, first: Int, last: Int): [LikedTweet!]!
 }
 
 type User {
+  comments(after: CommentWhereUniqueInput, before: CommentWhereUniqueInput, first: Int, last: Int): [Comment!]!
   email: String!
+  Following(after: FollowingWhereUniqueInput, before: FollowingWhereUniqueInput, first: Int, last: Int): [Following!]!
   id: Int!
+  likedTweet(after: LikedTweetWhereUniqueInput, before: LikedTweetWhereUniqueInput, first: Int, last: Int): [LikedTweet!]!
   name: String
-  tweets: Tweet
-}
-
-input UserCreateInput {
-  email: String!
-  name: String
-  posts: [PostCreateInput!]
-}
-
-input UserUniqueInput {
-  email: String
-  id: Int
+  Profile: Profile
+  tweets: [Tweet!]!
 }

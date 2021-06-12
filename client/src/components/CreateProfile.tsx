@@ -64,7 +64,6 @@ function CreateProfile() {
 			>
 				<Formik
 					initialValues={initialValues}
-					// validationSchema={validationSchema}
 					onSubmit={async (values, { setSubmitting }) => {
 						setSubmitting(true);
 						await createProfile({

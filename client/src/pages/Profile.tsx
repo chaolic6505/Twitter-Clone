@@ -1,7 +1,7 @@
 import { gql, useQuery } from '@apollo/client';
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-
+import CreateProfile from '../components/CreateProfile';
 import '../styles/primary.css';
 import '../styles/profile.css';
 
@@ -25,7 +25,11 @@ function Profile() {
 
 	if (loading) return <p>Loading...</p>;
 	if (error) return <p>{error.message}</p>;
-	return <h1>profile</h1>;
+	return (
+		<div className="container">
+			<CreateProfile />
+		</div>
+	);
 }
 
 export default Profile;
