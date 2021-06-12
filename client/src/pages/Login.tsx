@@ -38,7 +38,6 @@ function Login() {
 	return (
 		<div className="container">
 			<img src={TwitterLogo} alt="logo" style={{ width: '50px' }} className="logo" />
-			<h3>Log in to Fake Twitter</h3>
 			<Formik
 				initialValues={initialValues}
 				validationSchema={validationSchema}

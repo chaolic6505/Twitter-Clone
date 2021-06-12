@@ -49,7 +49,6 @@ function Signup() {
 	return (
 		<div className="container">
 			<img src={TwitterLogo} alt="logo" style={{ width: '50px' }} className="logo" />
-			<h3>Sign up</h3>
 			<Formik
 				initialValues={initialValues}
 				validationSchema={validationSchema}
